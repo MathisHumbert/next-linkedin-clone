@@ -2,12 +2,18 @@ import React from 'react';
 import Head from 'next/head';
 import { getSession, signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { useRecoilState } from 'recoil';
+import { AnimatePresence } from 'framer-motion';
 
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Feed from '../components/Feed';
+import Modal from '../components/Modal';
+import { modalState, modalTypeState } from '../atoms/modalAtom';
 
 const Index = () => {
+  const [modalOpen, setModalOpen] = useRecoilState(modalState);
+  const [modalType, setModalType] = useRecoilState(modalTypeState);
   const router = useRouter();
   const { status } = useSession({
     required: true,
@@ -32,6 +38,11 @@ const Index = () => {
           <Feed />
         </div>
         {/* Widgets */}
+        <AnimatePresence>
+          {modalOpen && (
+            <Modal handleClose={() => setModalOpen(false)} type={modalType} />
+          )}
+        </AnimatePresence>
       </main>
     </div>
   );
