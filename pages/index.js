@@ -9,10 +9,11 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Feed from '../components/Feed';
 import Modal from '../components/Modal';
+import Widgets from '../components/Widgets';
 import { modalState, modalTypeState } from '../atoms/modalAtom';
 import { connectToDatabase } from '../util/mongodb';
 
-const Index = ({ posts }) => {
+const Index = ({ posts, articles }) => {
   const [modalOpen, setModalOpen] = useRecoilState(modalState);
   const [modalType, setModalType] = useRecoilState(modalTypeState);
   const router = useRouter();
@@ -38,7 +39,7 @@ const Index = ({ posts }) => {
           <Sidebar />
           <Feed posts={posts} />
         </div>
-        {/* Widgets */}
+        <Widgets articles={articles} />
         <AnimatePresence>
           {modalOpen && (
             <Modal handleClose={() => setModalOpen(false)} type={modalType} />
@@ -70,9 +71,15 @@ export async function getServerSideProps(context) {
     .toArray();
 
   // Get Google News API
+  const response = await fetch(
+    `https://newsapi.org/v2/top-headlines?country=fr&apiKey=${process.env.NEWS_API_KEY}`
+  );
+  const data = await response.json();
+
   return {
     props: {
       session,
+      articles: data.articles,
       posts: posts.map((post) => ({
         _id: post._id.toString(),
         input: post.input,
