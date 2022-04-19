@@ -32,9 +32,9 @@ const Feed = ({ posts }) => {
     <div className='space-y-6 pb-24 max-w-lg'>
       <Input />
       {/* Posts */}
-      {!useSSRPostsState
-        ? realtimePosts.map((post) => <Post />)
-        : posts.map((post) => <Post />)}
+      {!useSSRPosts
+        ? realtimePosts.map((post) => <Post key={post._id} post={post} />)
+        : posts.map((post) => <Post key={post._id} post={post} />)}
       {/* Hybrid */}
     </div>
   );
